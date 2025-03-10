@@ -1,42 +1,69 @@
-name: super CI/CD
-
-# ma CI s'exécute au push sur ma main
 on:
   push:
-    branches: [main]
+    branches: [ main ]
 
-# les différents jobs
 jobs:
-  # je donne un nom
+  # Job de build et test
   build-and-test:
     runs-on: ubuntu-latest
-    steps:
-      - name: checkout du code
-        uses: actions/checkout@v3
-      - name: configurer node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'
-      - name: instal des dependances
-        run: npm install
-      - name: lancement des test unitaire
-        run: npm run test
-      - name: build de lappli
-        run: npm run build
 
+    steps:
+      
+name: Checkout du code
+      uses: actions/checkout@v3
+
+      
+name: Configurer node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'
+
+      
+name: Installation des dépendances
+      run: npm install
+
+      
+name: Lancement des tests unitaires
+      run: npm run test
+
+      
+name: Build de l'appli
+      run: npm run build
+
+      
+name: Test du build (liste du dossier dist)
+      run: ls -la ./dist
+
+      
+name: Upload du dossier dist
+      uses: actions/upload-artifact@v4
+      with:
+        name: dist
+        path: ./dist
+
+  # Job de déploiement
   deploy:
     needs: build-and-test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
-    permissions: #ajout des permissions necessaire pour un dépot public.
-      pages: write      
-      contents: read
-      id-token: write
+
     steps:
-      - name: Checkout du code
-        uses: actions/checkout@v3
-      - name: Deploiement en github page
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
+      
+name: Checkout du code
+      uses: actions/checkout@v3
+
+      
+name: Download du dossier dist
+      uses: actions/download-artifact@v4
+      with:
+        name: dist
+        path: ./dist
+
+      
+name: Test du dist (liste du dossier dist)
+      run: ls -la ./dist
+name: Déploiement sur GitHub Pages
+uses: peaceiris/actions-gh-pages@v3
+with:
+  github_token: ${{ secrets.GITHUB_TOKEN }}
+  publish_dir: ./dist
