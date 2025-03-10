@@ -1,0 +1,30 @@
+name: super CI/CD
+
+# ma CI s'exécute au push sur ma main
+on:
+  push:
+    branches: [main]
+
+# les différents jobs
+jobs:
+  # je donne un nom
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout du code
+        uses: actions/checkout@v3
+
+      - name: configurer node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: instal des dependances
+        run: npm install
+
+      - name: lancement des test unitaire
+        run: npm run test
+
+      - name: build de lappli
+        run: npm build
