@@ -1,6 +1,6 @@
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   # Job de build et test
@@ -8,38 +8,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      
-name: Checkout du code
-      uses: actions/checkout@v3
+      - name: Checkout du code
+        uses: actions/checkout@v3
 
-      
-name: Configurer node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '16'
+      - name: Configurer node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
 
-      
-name: Installation des dépendances
-      run: npm install
+      - name: Installation des dépendances
+        run: npm install
 
-      
-name: Lancement des tests unitaires
-      run: npm run test
+      - name: Lancement des tests unitaires
+        run: npm run test
 
-      
-name: Build de l'appli
-      run: npm run build
+      - name: Build de l'appli
+        run: npm run build
 
-      
-name: Test du build (liste du dossier dist)
-      run: ls -la ./dist
+      - name: Test du build (liste du dossier dist)
+        run: ls -la ./dist
 
-      
-name: Upload du dossier dist
-      uses: actions/upload-artifact@v4
-      with:
-        name: dist
-        path: ./dist
+      - name: Upload du dossier dist
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: ./dist
 
   # Job de déploiement
   deploy:
@@ -48,22 +41,20 @@ name: Upload du dossier dist
     if: github.ref == 'refs/heads/main'
 
     steps:
-      
-name: Checkout du code
-      uses: actions/checkout@v3
+      - name: Checkout du code
+        uses: actions/checkout@v3
 
-      
-name: Download du dossier dist
-      uses: actions/download-artifact@v4
-      with:
-        name: dist
-        path: ./dist
+      - name: Download du dossier dist
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: ./dist
 
-      
-name: Test du dist (liste du dossier dist)
-      run: ls -la ./dist
-name: Déploiement sur GitHub Pages
-uses: peaceiris/actions-gh-pages@v3
-with:
-  github_token: ${{ secrets.GITHUB_TOKEN }}
-  publish_dir: ./dist
+      - name: Test du dist (liste du dossier dist)
+        run: ls -la ./dist
+
+      - name: Déploiement sur GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
