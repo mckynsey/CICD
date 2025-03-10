@@ -1,3 +1,1 @@
-module.exports = {
-  publicPath: 'CICD'
-}
+module.exports = { publicPath: '/CICD/' };
